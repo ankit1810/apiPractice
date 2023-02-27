@@ -6,11 +6,13 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import models.DataPojo;
 import models.PostCallPojo;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import models.ListPojo;
 import utils.PropertyReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -38,7 +40,7 @@ public class TestClass extends BaseTest {
         System.out.println(listPojo.toString());
     }
     @Test(dataProviderClass = PostCallDataProvider.class,
-    dataProvider = "postNameJobMethod")
+    dataProvider = "postNameJobMethod",groups = {"sanity"})
     public void postCall1(String name, String job){
         PostCallPojo postCallPojo=new PostCallPojo();
         postCallPojo.setJob(job);
@@ -50,7 +52,8 @@ public class TestClass extends BaseTest {
         System.out.println(response.prettyPrint());
     }
     @Test
-    public void postCall2(){
+    @Parameters({"key"})
+    public void postCall2(String key){
         String payload="{\n" +
                 "  \"name\": \"morpheus\",\n" +
                 "  \"job\": \"leader\"\n" +
@@ -62,6 +65,7 @@ public class TestClass extends BaseTest {
                 .post(APIPath.apiPath.CREATE_USER);
         System.out.println(response.statusCode());
         System.out.println(response.prettyPrint());
+        System.out.println(key);
     }
     @Test
     public void DesertTest1(){
@@ -83,7 +87,8 @@ public class TestClass extends BaseTest {
 
     }
     @Test
-    public void usingJSONPath(){
+    public void usingJSONPath() throws IOException {
+        RestAssured.baseURI=PropertyReader.getValue("baseUrl");
         Response listPojo = given().headers(headers.defaultHeaders()).when().get(APIPath.apiPath.GET_CALL);
         JsonPath jsonPath = new JsonPath(listPojo.asString());
         List list=jsonPath.get("data");
