@@ -3,7 +3,7 @@
 <suite name="Suite" parallel="classes" thread-count="8">
     <groups>
         <run>
-            <include name=/>
+            <include name="sanity"/>
         </run>
     </groups>
     <test name="Test">
